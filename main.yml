@@ -1,0 +1,18 @@
+---
+- hosts: all
+
+  tasks:
+
+  # vars_file:
+  #   - config.yml
+
+  - name: Update Arch
+    become: true
+    community.general.pacman:
+      name: Update Arch
+      state: latest
+      update_cache: true
+    changed_when: false
+
+  # - name: Install other packages
+  #   become: true

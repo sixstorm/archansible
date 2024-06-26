@@ -1,0 +1,46 @@
+---
+update: true
+
+base_packages:
+  - base
+  - base_devel
+  - linux
+  - linux-firmware
+  - linux-headers
+  - sudo
+  - dhcpcd
+  - netctl
+  - networkmanager
+  - openssh
+  - neovim
+  - pipewire
+  - man-db
+  - man-pages
+  - git
+  - wget
+  - reflector
+  - alacritty
+  - polkit
+  - picom
+
+xorg_packages:
+  - xorg
+  - xorg-apps
+  - xorg-drivers
+  - xorg-fonts
+  - xorg-xinit
+  
+window_manager_packages:
+  - sway
+  - swaylock
+  - swaybg
+
+other_packages:
+  - mpv
+  - yay
+  - firefox
+  - ntfs-3g
+  - fastfetch
+  - btop
+  - xclip
+  - p7zip
