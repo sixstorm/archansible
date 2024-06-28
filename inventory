@@ -1,3 +1,10 @@
 [all]
-127.0.0.1   ansible_connection=local
+#127.0.0.1   ansible_connection=local
 #arch ansible_host=192.168.50.161 ansible_user=ascott
+#debian12 ansible_host=192.168.50.163 ansible_user=ascott
+
+[arch]
+arch ansible_host=192.168.50.161 ansible_user=ascott
+
+[debian]
+debian12 ansible_host=192.168.50.163 ansible_user=ascott

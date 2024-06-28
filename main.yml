@@ -1,18 +1,92 @@
 ---
-- hosts: all
+- hosts: debian
+  vars_files:
+    - config.yml
+  become: true
+  
+  # Ask for DM/WM Choice
+  vars_prompt:
+  - name: "WM"
+    prompt: "Which DM/WM do you want?"
+    private: no
 
   tasks:
 
-  # vars_file:
-  #   - config.yml
+  # Detect OS
+  - name: Detect OS
+    debug: msg="{{ ansible_distribution }} detected"
 
-  - name: Update Arch
-    become: true
-    community.general.pacman:
-      name: Update Arch
-      state: latest
-      update_cache: true
-    changed_when: false
+  # Arch Install Block
+  - block:  
+    - name: Update Arch
+      community.general.pacman:
+        update_cache: true
+        upgrade: true
 
-  # - name: Install other packages
-  #   become: true
+    - name: Install Base packages
+      community.general.pacman:
+        name: "{{ arch_base_packages }}"
+        state: latest
+      ignore_errors: true
+
+    - name: Install other packages
+      community.general.pacman:
+        name: "{{ arch_other_packages }}"
+        state: latest
+      ignore_errors: true
+
+    when: ansible_os_family == "Archlinux"
+
+  # Debian Install Block
+  - block:  
+    - name: Update Debian
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install Base Packages
+      ansible.builtin.apt:
+        name: "{{ debian_base_packages }}"
+        state: latest
+      ignore_errors: true
+
+    - name: Install other packages
+      ansible.builtin.apt:
+        name: "{{ debian_other_packages }}"
+        state: latest
+      ignore_errors: true
+
+    when: ansible_os_family == "Debian"
+
+  
+  # Install Sway and Configure
+  - block:
+    - name: Install WM packages
+      community.general.pacman:
+        name: "{{ sway_wm_packages }}"
+        state: latest
+      ignore_errors: true
+
+    - name: Copy Sway Config
+      ansible.builtin.copy:
+        remote_src: true
+        src: /etc/sway/config
+        dest: /home/ascott/.config/sway/config
+        owner: ascott
+        group: ascott
+
+    - name: Sway Config - Terminal Set
+      ansible.builtin.replace:
+        path: /home/ascott/.config/sway/config
+        regexp: '^(.*)set $term foot(.*)$'
+        replace: 'set $term alacritty'
+    when: ( WM == "sway" )
+
+  # Install Cinnamon DE
+  - block:
+    - name: Install Cinnamon DE
+      ansible.builtin.apt:
+        name: "{{ cinnamon_de_packages }}"
+        state: latest
+      ignore_errors: true
+
+    when: (WM == "cinnamon")
